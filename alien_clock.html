@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alien Symbol Clock</title>
+<style>
+    body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: radial-gradient(circle at center, #030712, #000000);
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+    }
+
+    .wrapper {
+        text-align: center;
+    }
+
+    h1 {
+        color: #8be9fd;
+        letter-spacing: 3px;
+        font-weight: 300;
+        margin-bottom: 20px;
+        text-shadow: 0 0 20px #00ffff;
+    }
+
+    canvas {
+        background: black;
+        border-radius: 50%;
+        box-shadow: 0 0 60px rgba(0,255,255,0.35),
+                    inset 0 0 50px rgba(0,255,255,0.15);
+    }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+    <h1>Alien Symbol Clock</h1>
+    <canvas id="clock" width="420" height="420"></canvas>
+</div>
+
+<script>
+const canvas = document.getElementById("clock");
+const ctx = canvas.getContext("2d");
+
+const center = canvas.width / 2;
+const radius = 130;
+
+const symbols = ["Ψ", "Ω", "Ϟ", "Ϫ", "Ϭ", "Ͼ", "Ϡ", "ϡ", "Ϣ", "Ϩ", "ϗ", "Ϙ"];
+
+function drawFace() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // glowing outer circle
+    ctx.beginPath();
+    ctx.arc(center, center, 155, 0, Math.PI * 2);
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 3;
+    ctx.shadowBlur = 25;
+    ctx.shadowColor = "cyan";
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // alien symbols
+    ctx.fillStyle = "#00ffff";
+    ctx.font = "22px Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    for (let i = 0; i < 12; i++) {
+        const angle = (i * 30 - 90) * Math.PI / 180;
+        const x = center + radius * Math.cos(angle);
+        const y = center + radius * Math.sin(angle);
+        ctx.fillText(symbols[i], x, y);
+    }
+}
+
+function drawHand(angleDeg, length, width, color) {
+    const angle = (angleDeg - 90) * Math.PI / 180;
+
+    const x = center + length * Math.cos(angle);
+    const y = center + length * Math.sin(angle);
+
+    ctx.beginPath();
+    ctx.moveTo(center, center);
+    ctx.lineTo(x, y);
+    ctx.lineWidth = width;
+    ctx.strokeStyle = color;
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = color;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+}
+
+function updateClock() {
+    drawFace();
+
+    const now = new Date();
+
+    const hour = (now.getHours() % 12) * 30 + (now.getMinutes() / 60) * 30;
+    const minute = now.getMinutes() * 6;
+    const second = now.getSeconds() * 6;
+
+    drawHand(hour, radius * 0.5, 6, "#ff0040");
+    drawHand(minute, radius * 0.8, 3, "#00aaff");
+    drawHand(second, radius * 0.9, 1.5, "#39ff14");
+
+    // center glow
+    ctx.beginPath();
+    ctx.arc(center, center, 6, 0, Math.PI * 2);
+    ctx.fillStyle = "cyan";
+    ctx.shadowBlur = 25;
+    ctx.shadowColor = "cyan";
+    ctx.fill();
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+</script>
+
+</body>
+</html>
